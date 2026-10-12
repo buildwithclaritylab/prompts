@@ -1,0 +1,7 @@
+#!/bin/sh
+# Generate release metadata before each Git commit.
+# Author: AMU-Chatia, mar 06/oct/2026
+
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "./scripts/Generate-Release.ps1"
+
+exit $?

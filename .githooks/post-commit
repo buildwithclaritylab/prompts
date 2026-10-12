@@ -1,0 +1,12 @@
+#!/bin/sh
+# Associate the committed release with a Git tag.
+# Author: AMU-Chatia, mar 06/oct/2026
+
+release_id=$(node -p "require('./package.json').releaseId") || exit 1
+
+if [ -z "$release_id" ]; then
+    echo "Release ID is empty. Git tag was not created." >&2
+    exit 1
+fi
+
+git tag -a "$release_id" -m "Release $release_id"

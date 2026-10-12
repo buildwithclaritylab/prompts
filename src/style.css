@@ -1,0 +1,446 @@
+:root {
+    font-family: Inter, Segoe UI, Arial, sans-serif;
+    color: #253a2c;
+    background: #f6f8f4;
+    font-synthesis: none;
+    --brand: #526d49
+}
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0
+}
+
+button {
+    cursor: pointer;
+    font: inherit
+}
+
+a {
+    color: var(--brand)
+}
+
+.shell {
+    max-width: 1160px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+    box-shadow: 0 6px 36px #152a1511
+}
+
+header {
+    display: flex;
+    align-items: center;
+    padding: 22px 38px;
+    gap: 12px;
+    border-bottom: 1px solid #e0e7dd;
+    font-size: .77rem;
+    font-weight: 700;
+    letter-spacing: .065em
+}
+
+.brand-mark {
+    background: var(--brand);
+    color: white;
+    border-radius: 9px;
+    padding: 9px
+}
+
+/* Mantiene el selector de idioma visible durante el desplazamiento. */
+.langs {
+  margin-left: auto;
+  display: flex;
+  gap: 5px;
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 1000;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #d5dfd1;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px #152a1518;
+}
+
+.langs button,
+.tech-nav button,
+.paging button,
+.carousel-nav button {
+    border: 1px solid #d5dfd1;
+    border-radius: 8px;
+    background: white;
+    color: #496346;
+    padding: 9px 12px
+}
+
+.langs button.active,
+.tech-nav button.active {
+    background: var(--brand);
+    color: white
+}
+
+.hero {
+    padding: 56px 54px 42px;
+    background: linear-gradient(135deg, #f5f8f3, #fff)
+}
+
+.eyebrow {
+    color: var(--brand);
+    font-size: .8rem;
+    font-weight: 700;
+    letter-spacing: .06em
+}
+
+.hero h1 {
+    font-size: clamp(1.85rem, 4vw, 3rem);
+    margin: 13px 0;
+    color: #243e2a
+}
+
+.hero p {
+    color: #657368;
+    max-width: 680px;
+    line-height: 1.6
+}
+
+.ref,
+.catalog {
+    padding: 26px 54px
+}
+
+.ref h2,
+.catalog>h2 {
+    font-size: 1.24rem;
+    color: #2b4430
+}
+
+.ratio-figs {
+    display: flex;
+    justify-content: space-around;
+    align-items: end;
+    gap: 14px;
+    margin: 25px 0
+}
+
+.ratio-figs>div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: .78rem
+}
+
+.ratio {
+    display: block;
+    border: 2px solid var(--brand);
+    background: #eaf0e6
+}
+
+.r11 {
+    width: 58px;
+    height: 58px
+}
+
+.r45 {
+    width: 55px;
+    height: 69px
+}
+
+.r916 {
+    width: 42px;
+    height: 75px
+}
+
+.r169 {
+    width: 87px;
+    height: 49px
+}
+
+.table-scroll {
+    overflow-x: auto
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .87rem;
+    line-height: 1.5
+}
+
+td,
+th {
+    text-align: left;
+    border-bottom: 1px solid #e4e8e1;
+    padding: 12px;
+    vertical-align: top
+}
+
+th {
+    color: #304935;
+    background: #f6f8f5
+}
+
+td:first-child {
+    font-weight: 600;
+    white-space: nowrap
+}
+
+.small,
+.subtle {
+    font-size: .8rem;
+    color: #718073;
+    line-height: 1.6
+}
+
+.catalog {
+    border-top: 1px solid #e4eae1
+}
+
+.tech-nav {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin: 22px 0
+}
+
+.tech-nav button {
+    min-width: 54px;
+    font-weight: 600
+}
+
+.tech {
+    border: 1px solid #e1e8dd;
+    background: #f8faf7;
+    border-radius: 14px;
+    padding: 24px
+}
+
+.tech-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--brand)
+}
+
+.tech-title>span {
+    font-size: 1.1rem;
+    font-weight: 700
+}
+
+.tech-title h2 {
+    font-size: 1.35rem;
+    color: #283e2e;
+    margin: 7px 0 22px
+}
+
+.tech-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 27px
+}
+
+.tech-content h3 {
+    color: #465f48;
+    font-size: .85rem;
+    margin: 5px 0 9px
+}
+
+.tech-content>p {
+    font-size: .95rem;
+    line-height: 1.65;
+    margin: 0 0 20px
+}
+
+.prompt-text {
+    white-space: pre-wrap;
+    background: white;
+    border: 1px solid #d7e1d5;
+    border-radius: 10px;
+    padding: 20px;
+    font-size: .91rem;
+    line-height: 1.75;
+    color: #394a3d
+}
+
+.copy {
+    background: var(--brand);
+    color: white;
+    border: 0;
+    border-radius: 9px;
+    padding: 11px 19px;
+    margin: 14px 0 22px;
+    font-weight: 600
+}
+
+.note {
+    border-left: 3px solid #b0c4a8;
+    padding: 4px 15px;
+    margin: 8px 0 14px;
+    color: #4b5e4e;
+    font-size: .84rem;
+    line-height: 1.6
+}
+
+.note p {
+    margin: 5px 0
+}
+
+.tech-media img {
+    width: 100%;
+    max-height: 580px;
+    object-fit: contain;
+    background: #edf0e9;
+    border-radius: 10px;
+    display: block
+}
+
+.tech-media figure {
+    margin: 0
+}
+
+.tech-media figcaption {
+    text-align: center;
+    color: #66786a;
+    font-size: .79rem;
+    padding: 10px
+}
+
+.carousel-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 9px;
+    font-size: .8rem
+}
+
+.carousel-nav button {
+    padding: 8px
+}
+
+.dimensions {
+    padding-top: 25px;
+    margin-top: 25px;
+    border-top: 1px solid #dbe5d8
+}
+
+.dimensions h3 {
+    font-size: 1rem
+}
+
+.paging {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px
+}
+
+.paging button:disabled,
+.carousel-nav button:disabled {
+    opacity: .35;
+    cursor: default
+}
+
+.sources {
+    border-top: 1px solid #e4eae1
+}
+
+.source-links {
+    display: grid;
+    gap: 11px;
+    font-size: .85rem
+}
+
+footer {
+    border-top: 1px solid #e3e8df;
+    padding: 23px 54px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    color: #687c6c;
+    font-size: .76rem
+}
+
+@media(max-width:720px) {
+    header {
+        padding: 15px 18px;
+        font-size: .68rem
+    }
+
+    /* Ajusta la posición del selector en pantallas pequeñas. */
+    .langs {
+        top: 10px;
+        right: 10px;
+        padding: 4px;
+    }
+
+    .hero {
+        padding: 37px 22px 25px
+    }
+
+    .ref,
+    .catalog {
+        padding: 23px 18px
+    }
+
+    .tech {
+        padding: 16px
+    }
+
+    .tech-grid {
+        grid-template-columns: 1fr;
+        gap: 14px
+    }
+
+    .tech-title h2 {
+        font-size: 1.13rem
+    }
+
+    .tech-nav button {
+        min-width: 47px;
+        padding: 9px
+    }
+
+    .ratio-figs {
+        gap: 7px
+    }
+
+    .r169 {
+        width: 65px;
+        height: 37px
+    }
+
+    .r11 {
+        width: 46px;
+        height: 46px
+    }
+
+    .r45 {
+        width: 43px;
+        height: 55px
+    }
+
+    .r916 {
+        width: 32px;
+        height: 57px
+    }
+
+    table {
+        font-size: .78rem
+    }
+
+    td,
+    th {
+        padding: 9px
+    }
+
+    .carousel-nav {
+        font-size: .7rem
+    }
+
+    footer {
+        padding: 20px 18px
+    }
+}
