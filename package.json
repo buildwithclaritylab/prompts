@@ -2,7 +2,7 @@
   "name": "prompts",
   "private": true,
   "version": "1.0.0",
-  "releaseId": "2026.10.12.1621",
+  "releaseId": "2026.10.12.2138",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1 --port 5173 --strictPort",
