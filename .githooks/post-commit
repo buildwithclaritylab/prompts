@@ -1,7 +1,18 @@
 #!/bin/sh
-# Associate the committed release with a Git tag.
-# Author: AMU-Chatia, mar 06/oct/2026
+# Create Git release tags only for commits on the main branch.
+# Preview commits do not generate official release tags.
+# Author: AMU-Chatia, lun 12/oct/2026
 
+# Identify the branch where the commit was created.
+branch=$(git branch --show-current) || exit 1
+
+# Preview is a QA environment, so it must not create release tags.
+if [ "$branch" != "main" ]; then
+    echo "Branch: $branch. Release tag skipped."
+    exit 0
+fi
+
+# Read the approved release identifier.
 release_id=$(node -p "require('./package.json').releaseId") || exit 1
 
 if [ -z "$release_id" ]; then
@@ -9,4 +20,5 @@ if [ -z "$release_id" ]; then
     exit 1
 fi
 
+# Create the official Git tag for the production release.
 git tag -a "$release_id" -m "Release $release_id"

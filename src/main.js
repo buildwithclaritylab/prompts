@@ -1,12 +1,30 @@
 import './style.css';
 import { loadProperties } from './properties.js';
 
-// Identificador de release generado automáticamente durante el commit.
+// Identificador asignado al preparar una versión para QA.
+// Se conserva al promover la versión aprobada a producción.
 import { releaseId } from '../package.json';
+
+// Identifica el ambiente sin modificar el número de versión.
+// Localhost y QA muestran Preview; producción muestra Release.
+const isPreview =
+  import.meta.env.DEV ||
+  import.meta.env.VITE_DEPLOY_CHANNEL === 'preview';
 
 /** Estado de navegación. Los textos, las imágenes y las URLs vienen de .properties. */
 const app = document.querySelector('#app');
-const state = { config: {}, translations: {}, language: '', current: 0, carousel: 0, toast: false };
+
+/** Estado de la interfaz y referencia del último prompt copiado. */
+const state = { 
+  config: {},
+  translations: {},
+  language: '',
+  current: 0,
+  carousel: 0,
+  toast: false,
+  copiedText: null
+};
+
 const val = (key) => state.translations[key] ?? `[${key}]`;
 const conf = (key) => state.config[key] ?? '';
 const imageUrl = (name) => `${import.meta.env.BASE_URL}${conf('site.imagesPath').replace(/^\//, '').replace(/\/$/, '')}/${name}`;
@@ -67,9 +85,9 @@ function render() {
   <section class="hero"><span class="eyebrow">${safe(val('site.kicker'))}</span><h1>${safe(val('site.title'))}</h1><p>${safe(val('site.description'))}</p></section>
   <section class="ref intro-ref"><h2>${safe(val('label.aspect'))}</h2><div class="ratio-figs"><div><i class="ratio r11"></i><span>1:1</span></div><div><i class="ratio r45"></i><span>4:5</span></div><div><i class="ratio r916"></i><span>9:16</span></div><div><i class="ratio r169"></i><span>16:9</span></div></div>${makeTable('ratio', 5, 3)}<p class="small">${safe(val('label.ratio.note'))}</p></section>
   <section class="catalog"><h2>${safe(val('nav.techniques'))}</h2><nav class="tech-nav" aria-label="${safe(val('label.menu'))}">${Array.from({ length: count }, (_, i) => `<button data-prompt="${i}" class="${i === state.current ? 'active' : ''}" aria-label="${num(i)} ${safe(val(`prompt.${num(i)}.title`))}" title="${safe(val(`prompt.${num(i)}.title`))}" ${i === state.current ? 'aria-current="true"' : ''}>${num(i)}</button>`).join('')}</nav>
-  <article class="tech"><div class="tech-title"><span>${id}</span><h2>${safe(val(`prompt.${id}.title`))}</h2></div><div class="tech-grid"><div class="tech-content"><h3>${safe(val('label.objective'))}</h3><p>${safe(val(`prompt.${id}.objective`))}</p><h3>${safe(val('label.prompt'))}</h3><div class="prompt-text" id="promptText">${safe(val(`prompt.${id}.body`))}</div><button class="copy" data-action="copy">${safe(val(state.toast ? 'action.copied' : 'action.copy'))}</button>${notes(id)}</div><div class="tech-media">${media(id)}</div></div>
+  <article class="tech"><div class="tech-title"><span>${id}</span><h2>${safe(val(`prompt.${id}.title`))}</h2></div><div class="tech-grid"><div class="tech-content"><h3>${safe(val('label.objective'))}</h3><p>${safe(val(`prompt.${id}.objective`))}</p><h3>${safe(val('label.prompt'))}</h3><div class="prompt-text" id="promptText">${safe(val(`prompt.${id}.body`))}</div><button class="copy" data-action="copy">${safe(val(state.toast ? 'action.copied' : 'action.copy'))}</button><p class="small clipboard-note">${safe(val('label.clipboard.note'))}</p>${notes(id)}</div><div class="tech-media">${media(id)}</div></div>
   ${id === '04' ? `<section class="dimensions"><h3>${safe(val('label.dims'))}</h3>${makeTable('dim', 4, 3)}<p class="small">${safe(val('label.dim.note'))}</p></section>` : ''}</article><div class="paging"><button data-action="prev" ${state.current === 0 ? 'disabled' : ''}>← ${safe(val('action.previous'))}</button><span>${state.current + 1} / ${count}</span><button data-action="next" ${state.current === count - 1 ? 'disabled' : ''}>${safe(val('action.next'))} →</button></div></section>
-  <section class="ref sources"><h2>${safe(val('label.sources'))}</h2><div class="source-links">${Array.from({length: 4},(_,i) => `<a href="${safe(conf(`site.sources.${i+1}.url`))}" target="_blank" rel="noopener noreferrer">${safe(val(`source.${i+1}.title`))} ↗</a>`).join('')}</div></section><footer><span>${safe(val('label.footer'))}${releaseId ? ` | ${safe(val('label.release'))} ${safe(releaseId)}` : ''}</span><a href="#top">${safe(val('label.backtop'))} ↑</a></footer></div>`;
+  <section class="ref sources"><h2>${safe(val('label.sources'))}</h2><div class="source-links">${Array.from({length: 4},(_,i) => `<a href="${safe(conf(`site.sources.${i+1}.url`))}" target="_blank" rel="noopener noreferrer">${safe(val(`source.${i+1}.title`))} ↗</a>`).join('')}</div></section><footer><span>${safe(val('label.footer'))}${releaseId ? ` | ${safe(val(isPreview ? 'label.preview' : 'label.release'))} ${safe(releaseId)}` : ''}</span><a href="#top">${safe(val('label.backtop'))} ↑</a></footer></div>`;
 }
 async function switchLanguage(lang) {
   if (!conf('site.availableLanguages').split(',').includes(lang)) return;
@@ -78,6 +96,41 @@ async function switchLanguage(lang) {
   state.toast = false;
   render();
 }
+
+/**
+ * Comprueba si el último prompt copiado permanece en el portapapeles.
+ * No modifica el estado cuando el navegador impide leer su contenido.
+ */
+async function checkClipboard() {
+  if (!state.toast || state.copiedText === null) return;
+  if (!navigator.clipboard?.readText) return;
+
+  const expectedText = state.copiedText;
+
+  try {
+    const clipboardText = await navigator.clipboard.readText();
+
+    // Evita aplicar resultados antiguos si el usuario copió otro prompt.
+    if (state.copiedText !== expectedText || !state.toast) return;
+
+    if (clipboardText !== expectedText) {
+      state.toast = false;
+      state.copiedText = null;
+      render();
+    }
+  } catch {
+    // Sin permiso de lectura, conservamos el estado anterior.
+  }
+}
+
+/** Comprueba el portapapeles cuando el usuario regresa a la pestaña. */
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) void checkClipboard();
+});
+
+window.addEventListener('focus', () => {
+  void checkClipboard();
+});
 
 /** Delegación de eventos: los botones siguen funcionando tras cada actualización. */
 app.addEventListener('click', async (event) => {
@@ -89,7 +142,11 @@ app.addEventListener('click', async (event) => {
   if (!action) return;
   if (action === 'copy') {
     const body = val(`prompt.${num(state.current)}.body`);
-    try { await navigator.clipboard.writeText(body); state.toast = true; render(); }
+    try { await navigator.clipboard.writeText(body);
+      // Conserva el contenido que se copió correctamente.
+      state.copiedText = body;
+      state.toast = true;
+      render(); }
     catch { window.alert(val('label.copy_error')); }
     return;
   }
