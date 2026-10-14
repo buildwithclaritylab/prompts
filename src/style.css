@@ -43,10 +43,15 @@ header {
 }
 
 .brand-mark {
-    background: var(--brand);
-    color: white;
-    border-radius: 9px;
-    padding: 9px
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-mark img {
+    display: block;
+    width: 150px;
+    height: auto;
 }
 
 /* Mantiene el selector de idioma visible durante el desplazamiento. */
@@ -366,7 +371,12 @@ footer {
 @media(max-width:720px) {
     header {
         padding: 15px 18px;
-        font-size: .68rem
+        font-size: .68rem;
+        padding-right: 115px;
+    }
+
+    .brand-mark img {
+        width: 75px;
     }
 
     /* Ajusta la posición del selector en pantallas pequeñas. */
