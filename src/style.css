@@ -368,6 +368,22 @@ footer {
     font-size: .76rem
 }
 
+/* Modif: AMU-Chatia, vie 30/oct/2026
+   Display the localized privacy notice below the release information.
+   Preserve the existing footer layout and responsive behavior.
+*/
+footer .footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+footer .footer-info a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
 @media(max-width:720px) {
     header {
         padding: 15px 18px;

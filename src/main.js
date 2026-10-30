@@ -1,3 +1,11 @@
+/**
+ * Modif: AMU-Chatia, vie 30/oct/2026
+ * Added the localized TDS Legal privacy notice link to the footer.
+ * Reads labels and URLs from the .properties configuration.
+ * Preserves the release indicator and back-to-top functionality.
+ * ------------------------
+*/
+
 import './style.css';
 import { loadProperties } from './properties.js';
 
@@ -87,8 +95,21 @@ function render() {
   <section class="catalog"><h2>${safe(val('nav.techniques'))}</h2><nav class="tech-nav" aria-label="${safe(val('label.menu'))}">${Array.from({ length: count }, (_, i) => `<button data-prompt="${i}" class="${i === state.current ? 'active' : ''}" aria-label="${num(i)} ${safe(val(`prompt.${num(i)}.title`))}" title="${safe(val(`prompt.${num(i)}.title`))}" ${i === state.current ? 'aria-current="true"' : ''}>${num(i)}</button>`).join('')}</nav>
   <article class="tech"><div class="tech-title"><span>${id}</span><h2>${safe(val(`prompt.${id}.title`))}</h2></div><div class="tech-grid"><div class="tech-content"><h3>${safe(val('label.objective'))}</h3><p>${safe(val(`prompt.${id}.objective`))}</p><h3>${safe(val('label.prompt'))}</h3><div class="prompt-text" id="promptText">${safe(val(`prompt.${id}.body`))}</div><button class="copy" data-action="copy">${safe(val(state.toast ? 'action.copied' : 'action.copy'))}</button><p class="small clipboard-note">${safe(val('label.clipboard.note'))}</p>${notes(id)}</div><div class="tech-media">${media(id)}</div></div>
   ${id === '04' ? `<section class="dimensions"><h3>${safe(val('label.dims'))}</h3>${makeTable('dim', 4, 3)}<p class="small">${safe(val('label.dim.note'))}</p></section>` : ''}</article><div class="paging"><button data-action="prev" ${state.current === 0 ? 'disabled' : ''}>← ${safe(val('action.previous'))}</button><span>${state.current + 1} / ${count}</span><button data-action="next" ${state.current === count - 1 ? 'disabled' : ''}>${safe(val('action.next'))} →</button></div></section>
-  <section class="ref sources"><h2>${safe(val('label.sources'))}</h2><div class="source-links">${Array.from({length: 4},(_,i) => `<a href="${safe(conf(`site.sources.${i+1}.url`))}" target="_blank" rel="noopener noreferrer">${safe(val(`source.${i+1}.title`))} ↗</a>`).join('')}</div></section><footer><span>${safe(val('label.footer'))}${releaseId ? ` | ${safe(val(isPreview ? 'label.preview' : 'label.release'))} ${safe(releaseId)}` : ''}</span><a href="#top">${safe(val('label.backtop'))} ↑</a></footer></div>`;
+  <section class="ref sources"><h2>${safe(val('label.sources'))}</h2><div class="source-links">${Array.from({length: 4},(_,i) => `<a href="${safe(conf(`site.sources.${i+1}.url`))}" target="_blank" rel="noopener noreferrer">${safe(val(`source.${i+1}.title`))} ↗</a>`).join('')}</div></section>
+  <footer>
+    <div class="footer-info">
+      <span>${safe(val('label.footer'))}${releaseId ? ` | ${safe(val(isPreview ? 'label.preview' : 'label.release'))} ${safe(releaseId)}` : ''}</span>
+      <a
+        href="${safe(conf(`site.privacy.${state.language}.url`))}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >${safe(val('label.privacy'))}</a>
+    </div>
+    <a href="#top">${safe(val('label.backtop'))} ↑</a>
+  </footer>
+  </div>`;
 }
+
 async function switchLanguage(lang) {
   if (!conf('site.availableLanguages').split(',').includes(lang)) return;
   state.translations = await loadProperties(`i18n/${lang}.properties`);
