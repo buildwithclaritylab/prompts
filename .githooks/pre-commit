@@ -1,6 +1,9 @@
 #!/bin/sh
-# Release identifiers are generated only when a QA version is prepared.
-# Regular development commits must not modify package.json.releaseId.
+# Generate release metadata automatically before each Git commit.
 # Author: AMU-Chatia, lun 12/oct/2026
+# Modif: AMU-Chatia, vie 30/oct/2026
+# Standardized release generation for Dev, QA and Production.
 
-exit 0
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "./scripts/Generate-Release.ps1"
+
+exit $?

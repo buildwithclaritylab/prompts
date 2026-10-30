@@ -1,15 +1,15 @@
 <#
-    Generates a release identifier when a version is ready for QA.
+    Generates a unique release identifier for the current project.
+    Updates releaseId in package.json before each Git commit.
 
-    Workflow:
-    1. Development commits do not generate release identifiers.
-    2. The identifier is generated manually on the preview branch.
-    3. The approved identifier is preserved when promoting to main.
-    4. Official Git tags are created only on main.
-
-    Format: yyyy.MM.dd.HHmm
+    The project name is obtained from package.json.
+    No project-specific values are required.
 
     Author: AMU-Chatia, lun 12/oct/2026
+    Modif: AMU-Chatia, vie 30/oct/2026
+    Standardized automatic release generation for Dev, QA and Production.
+
+    Format: yyyy.MM.dd.HHmm
 #>
 
 $ErrorActionPreference = "Stop"
@@ -23,18 +23,6 @@ try {
         throw "package.json was not found."
     }
 
-    # Identify the active Git branch.
-    $branch = (& git -C $projectRoot branch --show-current).Trim()
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "Unable to identify the current Git branch."
-    }
-
-    # Release identifiers can only be generated on preview.
-    if ($branch -ne "preview") {
-        throw "Release generation is only allowed on the preview branch. Current branch: $branch"
-    }
-
     # Read the existing project configuration.
     $content = [System.IO.File]::ReadAllText($packageFile)
     $package = $content | ConvertFrom-Json
@@ -43,24 +31,17 @@ try {
         throw "Project name is missing."
     }
 
-    # Prevent overwriting a version with uncommitted changes to package.json.
-    & git -C $projectRoot diff --quiet HEAD -- package.json
-
-    if ($LASTEXITCODE -ne 0) {
-        throw "package.json has uncommitted changes. Review them before generating a QA version."
-    }
-
-    # Generate a unique QA identifier.
+    # Generate the release identifier.
     $releaseId = (Get-Date).ToString(
         "yyyy.MM.dd.HHmm",
         [System.Globalization.CultureInfo]::InvariantCulture
     )
 
+    # Prevent duplicate identifiers.
     if ($package.releaseId -eq $releaseId) {
-        throw "Version $releaseId is already assigned."
+        throw "Release $releaseId already exists."
     }
 
-    # Verify that no official Git tag already uses this identifier.
     $existingTag = & git -C $projectRoot tag --list $releaseId
 
     if ($LASTEXITCODE -ne 0) {
@@ -68,7 +49,7 @@ try {
     }
 
     if ($existingTag -eq $releaseId) {
-        throw "Version $releaseId already exists as a Git tag."
+        throw "Release $releaseId already exists."
     }
 
     # Update only releaseId, preserving the rest of package.json.
@@ -95,7 +76,7 @@ try {
         $encoding
     )
 
-    # Stage the QA identifier for the next commit.
+    # Stage the release identifier for the pending commit.
     & git -C $projectRoot add -- package.json
 
     if ($LASTEXITCODE -ne 0) {
@@ -103,9 +84,7 @@ try {
     }
 
     Write-Host "Project: $($package.name)"
-    Write-Host "Branch: $branch"
-    Write-Host "QA version: $releaseId"
-    Write-Host "Version staged. Commit and push when QA deployment is approved."
+    Write-Host "Release: $releaseId"
 }
 catch {
     Write-Error $_
